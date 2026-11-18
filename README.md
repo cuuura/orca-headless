@@ -75,6 +75,8 @@ ooo interview "만들 것"    → 질문이 바로 시작되는지
 | `ORCA_EXTRA_ARGS` | (없음) | `orca serve`에 추가할 옵션 (예: `--mobile-pairing`) |
 | `CLAUDE_CODE_OAUTH_TOKEN` | (없음) | Claude 로그인 토큰 |
 | `GIT_USER_NAME` / `GIT_USER_EMAIL` | (없음) | 커밋 작성자 |
+| `GIT_HOST` / `GIT_USERNAME` / `GIT_TOKEN` | (없음) | git 서버 HTTPS 인증. 시작할 때 `~/.git-credentials`에 등록 |
+| `GIT_CREDENTIALS` | (없음) | 추가 호스트. 공백으로 구분한 `https://아이디:토큰@호스트` 목록 |
 | `OUROBOROS_AUTO_SETUP` | `1` | `0`이면 플러그인/setup 자동 실행 안 함 |
 
 ## 자동 빌드

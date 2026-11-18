@@ -16,6 +16,30 @@ auto_setup() {
     git config --global credential.helper store
   fi
 
+  # --- git 인증 정보 (환경 변수 → ~/.git-credentials) -----------------------
+  cred_file="$HOME/.git-credentials"
+  add_credential() {
+    # $1 = https://사용자:토큰@호스트  (같은 호스트의 기존 항목은 교체)
+    entry="$1"
+    host_part="${entry##*@}"
+    touch "$cred_file" && chmod 600 "$cred_file"
+    grep -v "@${host_part}\$" "$cred_file" > "${cred_file}.tmp" 2>/dev/null || true
+    printf '%s\n' "$entry" >> "${cred_file}.tmp"
+    mv "${cred_file}.tmp" "$cred_file" && chmod 600 "$cred_file"
+    log "git 인증: ${host_part} 등록"
+  }
+  if [ -n "$GIT_HOST" ] && [ -n "$GIT_TOKEN" ]; then
+    h="${GIT_HOST#https://}"; h="${h#http://}"; h="${h%/}"
+    add_credential "https://${GIT_USERNAME:-git}:${GIT_TOKEN}@${h}"
+  fi
+  # 추가 호스트: 공백/줄바꿈으로 구분한 https://사용자:토큰@호스트 목록
+  for extra in $GIT_CREDENTIALS; do
+    case "$extra" in
+      https://*@*) add_credential "${extra%/}" ;;
+      *) log "git 인증: GIT_CREDENTIALS 항목 형식이 잘못되어 건너뜀" ;;
+    esac
+  done
+
   if [ "${OUROBOROS_AUTO_SETUP:-1}" != "1" ]; then
     log "OUROBOROS_AUTO_SETUP=0 — Ouroboros 자동 설정을 건너뜁니다."
     return 0

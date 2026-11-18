@@ -27,6 +27,13 @@ services:
       GIT_USER_NAME: ""
       GIT_USER_EMAIL: ""
 
+      # [선택] git 서버 인증 (Forgejo/Gitea/GitHub 등, HTTPS). 토큰은 저장소 읽기/쓰기 권한만.
+      GIT_HOST: ""          # 예: forgejo.example.com
+      GIT_USERNAME: ""      # 로그인 아이디
+      GIT_TOKEN: ""         # 액세스 토큰
+      # 호스트가 더 있으면 공백으로 구분: "https://아이디:토큰@github.com https://..."
+      GIT_CREDENTIALS: ""
+
       # Ouroboros 플러그인 설치 + `ouroboros setup` 자동 실행 (끄려면 "0")
       OUROBOROS_AUTO_SETUP: "1"
     volumes:
