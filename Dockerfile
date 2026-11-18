@@ -18,6 +18,9 @@ RUN npm install -g @anthropic-ai/claude-code
 RUN PIPX_HOME=/opt/pipx PIPX_BIN_DIR=/usr/local/bin \
     pipx install 'ouroboros-ai[claude]'
 
+# uv/uvx: Ouroboros Claude Code 플러그인이 MCP 서버를 uvx로 띄움
+RUN PIPX_HOME=/opt/pipx PIPX_BIN_DIR=/usr/local/bin pipx install uv
+
 # Orca: 컨테이너에는 FUSE가 없으므로 AppImage를 풀어서 실행
 RUN mkdir -p /opt/orca && cd /opt/orca \
  && if [ "$ORCA_VERSION" = "latest" ]; then \
