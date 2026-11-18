@@ -1,0 +1,57 @@
+# Forgejo Actions용. 필요한 것:
+#  - Docker 빌드가 가능한 러너 (docker 소켓 또는 dind 사용 가능, 라벨: docker)
+#  - 저장소 Variables: REGISTRY (예: git.example.com — https:// 없이)
+#  - 저장소 Secrets:   REGISTRY_TOKEN (package 쓰기 권한이 있는 액세스 토큰)
+name: build
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 18 * * *"   # 매일 03:17 KST
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: docker
+    steps:
+      - uses: https://code.forgejo.org/actions/checkout@v4
+
+      - name: Resolve versions
+        id: ver
+        run: |
+          tag=$(curl -fsSL https://api.github.com/repos/stablyai/orca/releases/latest | grep -m1 '"tag_name"' | cut -d '"' -f 4)
+          test -n "$tag"
+          image="${{ vars.REGISTRY }}/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+
+      - uses: https://github.com/docker/login-action@v3
+        with:
+          registry: ${{ vars.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+
+      - name: Check existing image
+        id: exists
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && \
+             docker manifest inspect "${{ steps.ver.outputs.image }}:${{ steps.ver.outputs.tag }}" >/dev/null 2>&1; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: https://github.com/docker/setup-buildx-action@v3
+        if: steps.exists.outputs.skip == 'false'
+
+      - uses: https://github.com/docker/build-push-action@v6
+        if: steps.exists.outputs.skip == 'false'
+        with:
+          context: .
+          push: true
+          build-args: |
+            ORCA_VERSION=${{ steps.ver.outputs.tag }}
+          tags: |
+            ${{ steps.ver.outputs.image }}:${{ steps.ver.outputs.tag }}
+            ${{ steps.ver.outputs.image }}:latest

@@ -1,0 +1,17 @@
+# TrueNAS: Apps → Discover Apps → Install via YAML 에 붙여넣기
+services:
+  orca:
+    # GitHub에서 빌드한 경우:  ghcr.io/<github계정>/orca-headless:latest
+    # Forgejo에서 빌드한 경우: <forgejo주소>/<계정>/orca-headless:latest
+    image: ghcr.io/cuuura/orca-headless:latest
+    restart: unless-stopped
+    ports:
+      - "6768:6768"
+    environment:
+      # PC/폰에서 이 서버에 닿을 수 있는 주소 (내부 IP 또는 Tailscale IP). 127.0.0.1 금지
+      PAIRING_ADDRESS: "CHANGE_ME"
+      # 폰 페어링이 필요하면: "--mobile-pairing"
+      ORCA_EXTRA_ARGS: ""
+    volumes:
+      # 로그인 정보, 저장소, Orca/Ouroboros 설정이 모두 여기에 남습니다 (소유자 568:568)
+      - /mnt/CHANGE_ME/orca/home:/home/orca

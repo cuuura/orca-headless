@@ -1,0 +1,58 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 18 * * *"   # 매일 03:17 KST, Orca 새 릴리스 확인
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve versions
+        id: ver
+        run: |
+          tag=$(curl -fsSL https://api.github.com/repos/stablyai/orca/releases/latest | jq -r .tag_name)
+          test -n "$tag" && test "$tag" != "null"
+          image="ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 예약 실행일 때는 이미 같은 Orca 버전 이미지가 있으면 건너뜀
+      - name: Check existing image
+        id: exists
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && \
+             docker manifest inspect "${{ steps.ver.outputs.image }}:${{ steps.ver.outputs.tag }}" >/dev/null 2>&1; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: docker/setup-buildx-action@v3
+        if: steps.exists.outputs.skip == 'false'
+
+      - uses: docker/build-push-action@v6
+        if: steps.exists.outputs.skip == 'false'
+        with:
+          context: .
+          push: true
+          build-args: |
+            ORCA_VERSION=${{ steps.ver.outputs.tag }}
+          tags: |
+            ${{ steps.ver.outputs.image }}:${{ steps.ver.outputs.tag }}
+            ${{ steps.ver.outputs.image }}:latest
