@@ -32,6 +32,9 @@ RUN mkdir -p /opt/orca && cd /opt/orca \
  && ln -s /opt/orca/squashfs-root/AppRun /usr/local/bin/orca-app \
  && echo "$ORCA_VERSION" > /opt/orca/VERSION
 
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # TrueNAS apps 사용자(UID/GID 568)와 맞춤
 RUN groupadd -g 568 orca && useradd -m -u 568 -g 568 -s /bin/bash orca
 USER orca
@@ -44,4 +47,4 @@ ENV LIBGL_ALWAYS_SOFTWARE=1 \
 
 EXPOSE 6768
 
-CMD ["sh", "-c", "exec xvfb-run --auto-servernum orca-app serve --port ${ORCA_PORT} --pairing-address ${PAIRING_ADDRESS} ${ORCA_EXTRA_ARGS}"]
+CMD ["/usr/local/bin/entrypoint.sh"]

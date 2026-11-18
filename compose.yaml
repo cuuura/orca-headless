@@ -14,4 +14,4 @@ services:
       ORCA_EXTRA_ARGS: ""
     volumes:
       # 로그인 정보, 저장소, Orca/Ouroboros 설정이 모두 여기에 남습니다 (소유자 568:568)
-      - /mnt/CHANGE_ME/orca/home:/home/orca
+      - /mnt/CHANGE_ME/appdata/orca/home:/home/orca
