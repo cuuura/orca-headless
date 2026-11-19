@@ -40,6 +40,48 @@ auto_setup() {
     esac
   done
 
+  # --- Claude Code 기본 권한 모드 (환경 변수 → ~/.claude/settings.json) -----
+  # 다른 설정 키는 그대로 두고 permissions.defaultMode만 맞춘다.
+  if [ -n "$CLAUDE_PERMISSION_MODE" ]; then
+    case "$CLAUDE_PERMISSION_MODE" in
+      default|acceptEdits|plan|auto|dontAsk|bypassPermissions)
+        if CLAUDE_PERMISSION_MODE="$CLAUDE_PERMISSION_MODE" python3 - <<'PYEOF'
+import json, os, sys
+path = os.path.expanduser("~/.claude/settings.json")
+os.makedirs(os.path.dirname(path), exist_ok=True)
+data = {}
+if os.path.exists(path):
+    try:
+        with open(path) as f:
+            data = json.load(f)
+        if not isinstance(data, dict):
+            raise ValueError("settings.json 최상위가 객체가 아님")
+    except Exception as e:
+        print(f"settings.json을 읽을 수 없어 건드리지 않습니다: {e}", file=sys.stderr)
+        sys.exit(1)
+perms = data.get("permissions")
+if not isinstance(perms, dict):
+    perms = {}
+perms["defaultMode"] = os.environ["CLAUDE_PERMISSION_MODE"]
+data["permissions"] = perms
+tmp = path + ".tmp"
+with open(tmp, "w") as f:
+    json.dump(data, f, indent=2, ensure_ascii=False)
+    f.write("\n")
+os.replace(tmp, path)
+PYEOF
+        then
+          log "Claude 권한 모드: ${CLAUDE_PERMISSION_MODE}"
+        else
+          log "Claude 권한 모드 설정 실패 (계속 진행)"
+        fi
+        ;;
+      *)
+        log "CLAUDE_PERMISSION_MODE 값이 올바르지 않아 건너뜀: ${CLAUDE_PERMISSION_MODE}"
+        ;;
+    esac
+  fi
+
   if [ "${OUROBOROS_AUTO_SETUP:-1}" != "1" ]; then
     log "OUROBOROS_AUTO_SETUP=0 — Ouroboros 자동 설정을 건너뜁니다."
     return 0

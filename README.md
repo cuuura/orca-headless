@@ -74,6 +74,7 @@ ooo interview "만들 것"    → 질문이 바로 시작되는지
 | `ORCA_PORT` | `6768` | 컨테이너 안에서 듣는 포트. 직접 연결 시 호스트 포트와 같게 |
 | `ORCA_EXTRA_ARGS` | (없음) | `orca serve`에 추가할 옵션 (예: `--mobile-pairing`) |
 | `CLAUDE_CODE_OAUTH_TOKEN` | (없음) | Claude 로그인 토큰 |
+| `CLAUDE_PERMISSION_MODE` | (없음) | Claude Code 기본 권한 모드(`bypassPermissions` 등). 시작할 때 `~/.claude/settings.json`의 `permissions.defaultMode`에 반영 |
 | `GIT_USER_NAME` / `GIT_USER_EMAIL` | (없음) | 커밋 작성자 |
 | `GIT_HOST` / `GIT_USERNAME` / `GIT_TOKEN` | (없음) | git 서버 HTTPS 인증. 시작할 때 `~/.git-credentials`에 등록 |
 | `GIT_CREDENTIALS` | (없음) | 추가 호스트. 공백으로 구분한 `https://아이디:토큰@호스트` 목록 |

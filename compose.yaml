@@ -23,6 +23,10 @@ services:
       #        비워 두면 컨테이너 셸에서 `claude`를 한 번 실행해 로그인합니다.
       CLAUDE_CODE_OAUTH_TOKEN: ""
 
+      # [선택] Claude Code 기본 권한 모드. "bypassPermissions"면 확인 없이 실행합니다.
+      #        격리된 컨테이너에서만 쓰고, git 토큰 권한은 좁게 두세요. 비우면 변경 없음.
+      CLAUDE_PERMISSION_MODE: ""
+
       # [선택] 커밋 작성자 정보
       GIT_USER_NAME: ""
       GIT_USER_EMAIL: ""
