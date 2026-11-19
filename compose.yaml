@@ -40,6 +40,11 @@ services:
 
       # Ouroboros 플러그인 설치 + `ouroboros setup` 자동 실행 (끄려면 "0")
       OUROBOROS_AUTO_SETUP: "1"
+
+      # [선택] Ouroboros 웹 콘솔(실행 현황, 설정)을 고정 포트로 띄움.
+      #        켜려면 "1"로 바꾸고 ports에 "36769:36769"를 추가. 접속 URL은 로그에 찍힙니다.
+      OUROBOROS_GUI: "0"
+      OUROBOROS_GUI_PORT: "36769"
     volumes:
       # 로그인, 플러그인, Ouroboros 설정, 저장소가 모두 여기에 남습니다 (소유자 568:568)
       - /mnt/CHANGE_ME/appdata/orca/home:/home/orca

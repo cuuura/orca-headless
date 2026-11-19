@@ -139,6 +139,19 @@ while [ ! -S "/tmp/.X11-unix/X${DISPLAY_NUM}" ] && [ "$i" -lt 50 ]; do
   i=$((i + 1))
 done
 
+# --- Ouroboros 웹 콘솔 (선택) -------------------------------------------------
+# OUROBOROS_GUI=1 이면 고정 포트로 콘솔을 띄운다. 접속 URL(액세스 토큰 포함)은 로그에 찍힌다.
+if [ "${OUROBOROS_GUI:-0}" = "1" ]; then
+  GUI_PORT="${OUROBOROS_GUI_PORT:-10300}"
+  log "Ouroboros 콘솔 시작: 0.0.0.0:${GUI_PORT} (URL의 호스트는 서버 주소로 바꿔서 접속)"
+  (
+    cd "$HOME/workspace" 2>/dev/null || cd "$HOME"
+    ouroboros gui --host 0.0.0.0 --port "$GUI_PORT" --no-browser 2>&1 \
+      | sed -u 's/^/[ouroboros-gui] /' >&2
+    log "Ouroboros 콘솔이 종료되었습니다."
+  ) &
+fi
+
 # --- Orca -------------------------------------------------------------------
 PORT="${ORCA_PORT:-6768}"
 

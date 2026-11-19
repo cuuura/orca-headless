@@ -79,6 +79,8 @@ ooo interview "만들 것"    → 질문이 바로 시작되는지
 | `GIT_HOST` / `GIT_USERNAME` / `GIT_TOKEN` | (없음) | git 서버 HTTPS 인증. 시작할 때 `~/.git-credentials`에 등록 |
 | `GIT_CREDENTIALS` | (없음) | 추가 호스트. 공백으로 구분한 `https://아이디:토큰@호스트` 목록 |
 | `OUROBOROS_AUTO_SETUP` | `1` | `0`이면 플러그인/setup 자동 실행 안 함 |
+| `OUROBOROS_GUI` | `0` | `1`이면 Ouroboros 웹 콘솔을 `0.0.0.0`에 띄움. 접속 URL(토큰 포함)은 로그의 `[ouroboros-gui]` 줄 |
+| `OUROBOROS_GUI_PORT` | `10300` | 콘솔 포트. compose의 `ports`에 같은 번호로 매핑 |
 
 ## 자동 빌드
 
