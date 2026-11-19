@@ -43,6 +43,10 @@ RUN groupadd -g 568 orca && useradd -m -u 568 -g 568 -s /bin/bash orca
 USER orca
 WORKDIR /home/orca
 
+# Claude Code는 이미지에 전역 설치되어 있어 컨테이너 안에서 자동 업데이트할 수 없음.
+# 업데이트는 이미지 재빌드로 반영하므로 자동 업데이트를 끈다.
+ENV DISABLE_AUTOUPDATER=1
+
 ENV LIBGL_ALWAYS_SOFTWARE=1 \
     ORCA_PORT=6768 \
     PAIRING_ADDRESS="" \
