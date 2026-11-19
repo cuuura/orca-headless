@@ -11,7 +11,7 @@ Stably(Orca), Ouroboros 프로젝트와 무관합니다.
 |---|---|
 | Orca | GitHub 최신 릴리스 AppImage를 풀어서 포함 (`orca-app` 명령) |
 | Claude Code | npm 전역 설치 |
-| Ouroboros | pipx (`ouroboros`, `ooo` 명령) |
+| Ouroboros | pipx, `[claude,tui]` extras (`ouroboros`, `ooo` 명령, TUI 모니터 포함) |
 | uv / uvx | pipx — Ouroboros 플러그인이 MCP 서버를 띄울 때 필요 |
 
 ## 컨테이너가 시작할 때 자동으로 하는 일

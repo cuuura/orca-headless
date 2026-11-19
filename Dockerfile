@@ -14,9 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Claude Code
 RUN npm install -g @anthropic-ai/claude-code
 
-# Ouroboros (Python 3.12 이상 필요)
+# Ouroboros (Python 3.12 이상 필요). tui: `ouroboros tui monitor` 의존성
 RUN PIPX_HOME=/opt/pipx PIPX_BIN_DIR=/usr/local/bin \
-    pipx install 'ouroboros-ai[claude]'
+    pipx install 'ouroboros-ai[claude,tui]'
 
 # uv/uvx: Ouroboros Claude Code 플러그인이 MCP 서버를 uvx로 띄움
 RUN PIPX_HOME=/opt/pipx PIPX_BIN_DIR=/usr/local/bin pipx install uv
